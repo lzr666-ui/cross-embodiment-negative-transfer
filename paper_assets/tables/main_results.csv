@@ -1,0 +1,7 @@
+setting,source_ratio,target_val_loss
+Target-only,0.0,0.378135
+Routed piper5,9.1,1.668835
+Naive piper50,50.0,2.647340
+Aloha naive mix,50.0,3.117869
+Piper source-only,100.0,7.151734
+Aloha source-only,100.0,13.894630
