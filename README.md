@@ -24,6 +24,15 @@ When does cross-embodiment data hurt target robot policy learning, and how can b
 Naive mixing increases target-domain validation loss by **7.00x** compared with target-only training.  
 Body-aware routing reduces the naive-mixing loss by **37.0%**.
 
+## Source Generalization
+
+| Target | Source | Conflict score | Source-only loss | Naive mix loss | Negative transfer |
+|---|---|---:|---:|---:|---|
+| franka | piper | 16.038 | 7.152 | 2.647 | Yes |
+| franka | aloha-agilex | 15.272 | 13.895 | 3.118 | Yes |
+
+Both piper and aloha-agilex are high-conflict source embodiments for franka, and both hurt target-domain validation performance under naive mixing.
+
 ## Conflict Scores
 
 | Target | Source | Conflict score | Source-only loss | Naive mix loss |
