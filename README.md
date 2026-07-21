@@ -17,9 +17,12 @@ When does cross-embodiment data hurt target robot policy learning, and how can b
 
 | Setting | Mean target-val loss |
 |---|---:|
-| Target-only | 0.371 |
-| Routed franka+piper5 | 1.777 |
-| Naive franka+piper50 | 2.775 |
+| Target-only | 0.378 |
+| Routed franka+piper5 | 1.669 |
+| Naive franka+piper50 | 2.647 |
+
+Naive mixing increases target-domain validation loss by **7.00x** compared with target-only training.  
+Body-aware routing reduces the naive-mixing loss by **37.0%**.
 
 ## Conflict Scores
 
@@ -39,6 +42,9 @@ scripts/
 exp_logs/
   beat_block_hammer/
     seed1_summary.md
-    seed0_seed1_comparison.md
+    seed0_summary.md
     body_aware_conflict_routing_method.md
     paper_outline.md
+    seed0_seed1_seed2_comparison.md
+    seed2_summary.md
+    body_aware_routing_rule.md
