@@ -1,39 +1,39 @@
-# Aloha-AgileX Source Summary
+# Aloha-AgileX Summary: Cross-Embodiment Negative Transfer
 
 ## Setup
 
-| Item | Setting |
-|---|---|
-| Environment | RoboTwin2.0 |
-| Policy | ACT |
-| Task | `beat_block_hammer` |
-| Target embodiment | `franka` |
-| Source embodiment | `aloha-agilex` |
-| Evaluation data | `target_franka_50` validation set |
-| Evaluation metric | Offline target-domain validation loss |
-| Alignment | zero-padding aloha-agilex 14D to 16D |
-| State dim | 16 |
-| Chunk size | 50 |
+- Task: beat_block_hammer
+- Target embodiment: franka
+- Source embodiment: aloha-agilex
+- Policy: ACT
+- Evaluation: offline target-domain validation loss on franka validation set
+- Target demos: 50
+- Source demos: 50
+- Seeds: 0, 1, 2
+- State/action dimension: franka 16D, aloha-agilex original 14D padded to 16D for ACT training
 
-## Conflict Score
+## Body-Aware Conflict Score
 
-| Target | Source | dim gap | qpos mean gap | qpos std gap | action mean gap | action std gap | Conflict score |
-|---|---|---:|---:|---:|---:|---:|---:|
-| franka | aloha-agilex | 2.000000 | 4.933475 | 1.704460 | 4.926703 | 1.707100 | 15.271738 |
+| Target | Source | target_dim | source_dim | dim_gap | qpos_mean_gap | qpos_std_gap | action_mean_gap | action_std_gap | conflict_score |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| franka | aloha-agilex | 16 | 14 | 2.000000 | 4.933475 | 1.704460 | 4.926703 | 1.707100 | 15.271738 |
 
-## Results
+## Offline Target Validation Results
 
-| Method | Train data | Source ratio | L1 | KL | Target-val loss |
-|---|---|---:|---:|---:|---:|
-| Source-only | aloha-agilex 50 | 100.0% | 0.682021 | 1.321261 | 13.894630 |
-| Naive mix | franka 50 + aloha-agilex 50 | 50.0% | 0.454245 | 0.266362 | 3.117869 |
+| Setting | Target demos | Source demos | Source ratio | Seed0 | Seed1 | Seed2 | Mean | Std |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| target-only | 50 | 0 | 0.0% | 0.396934 | 0.345563 | 0.391908 | 0.378135 | 0.023119 |
+| aloha routed | 50 | 5 | 9.1% | 1.831955 | 2.041737 | 2.694631 | 2.189441 | 0.367331 |
+| aloha naive | 50 | 50 | 50.0% | 2.655153 | 2.869212 | 3.749108 | 3.091158 | 0.473378 |
+
+## Derived Metrics
+
+- Naive negative transfer ratio: 3.091158 / 0.378135 = 8.17x
+- Routed negative transfer ratio: 2.189441 / 0.378135 = 5.79x
+- Routing mitigation over naive mixing: (3.091158 - 2.189441) / 3.091158 = 29.17%
 
 ## Interpretation
 
-Aloha-agilex is another high-conflict source embodiment for franka. Similar to piper, aloha-agilex causes severe degradation under source-only transfer and also hurts franka target-domain validation performance under naive mixing.
+Aloha-agilex has a high body-aware conflict score with franka. Under naive 50:50 cross-embodiment mixing, the target-domain validation loss increases substantially compared with target-only training. Reducing the source ratio from 50 aloha demonstrations to 5 aloha demonstrations lowers the target validation loss, suggesting that body-aware routing/source downweighting can partially mitigate negative transfer.
 
-Compared with the three-seed franka-only baseline:
-
-```text
-target-only mean loss = 0.378135
-franka+aloha naive mix loss = 3.117869
+However, the routed setting still performs worse than target-only, indicating that source downweighting mitigates but does not fully solve the embodiment mismatch problem under weak alignment.
